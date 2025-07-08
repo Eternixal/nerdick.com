@@ -24,7 +24,7 @@
 </head>
 <body>
 
-  <button class="sign-btn" onclick="window.open('https://nerdick-com-m128.vercel.app/', '_blank')">Masuk Sekarang</button>
+  <button class="sign-btn" onclick="window.open('https://nerdick-com-q6br-rdrrth05z-eternixals-projects.vercel.app', '_blank')">Masuk Sekarang</button>
 
 </body>
 </html>
