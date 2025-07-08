@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In Button</title>
+  <style>
+    .sign-btn {
+      padding: 12px 30px;
+      background-color: #FFFFFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 9px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 0, 119, 0.6);
+    }
+    .sign-btn:hover {
+      background-color: #ff3399;
+      box-shadow: 0 0 20px rgba(255, 0, 119, 0.9);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <button class="sign-btn" onclick="window.open('https://nerdick-com-m128.vercel.app/', '_blank')">Masuk Sekarang</button>
+
+</body>
+</html>
