@@ -1,146 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Nerdix Savage Login 🔥</title>
-  <style>
-    body {
-      background: #0f0f0f;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    input {
-      margin: 8px;
-      padding: 12px;
-      width: 250px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-    }
-    button {
-      padding: 12px 30px;
-      margin: 5px;
-      border: none;
-      border-radius: 6px;
-      background: #ff0077;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
-    button:hover {
-      background: #ff3399;
-      box-shadow: 0 0 10px rgba(255, 0, 119, 0.8);
-      transform: translateY(-2px);
-    }
-    #toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #ff0077;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>Nerdix Login</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Navigation bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            background: rgba(230, 230, 230, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 12px 12px;
+            z-index: 999;
+        }
+        nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            font-size: 12px;
+            transition: color 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+        nav a span {
+            width: 20px;
+            height: 20px;
+        }
+        nav a::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            left: 0;
+            bottom: -2px;
+            background: white;
+            transition: width 0.4s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        nav a:hover {
+            color: #e0e0e0;
+            transform: scale(1.03) translateY(-2px);
+        }
+        nav a.active {
+            color: #ff4d4d;
+        }
+
+        /* Login form styling */
+        input {
+            margin: 8px;
+            padding: 12px;
+            width: 250px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            background: rgba(230, 230, 230, 0.1);
+            color: #fff;
+        }
+        input::placeholder {
+            color: #fff;
+            opacity: 1;
+        }
+        button {
+            padding: 12px 30px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            background: #777777;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #999999;
+            box-shadow: 0 0 10px rgba(140, 140, 140, 0.8);
+            transform: translateY(-2px);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #777777;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation bar -->
+    <nav>
+        <a href="#home">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10h6v-6h4v6h6V10" />
+                </svg>
+            </span>
+            Home
+        </a>
+    </nav>
 
-  <h1>🔥 Nerdix Savage Auth 🔥</h1>
+    <!-- Login form -->
+    <h1>Welcome, User</h1>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="submit()">Submit</button>
 
-  <input type="email" id="email" placeholder="Email" />
-  <input type="password" id="password" placeholder="Password" />
+    <div id="toast"></div>
 
-  <button onclick="login()">Sign In</button>
-  <button onclick="register()">Register</button>
-  <button onclick="logout()">Logout</button>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
 
-  <div id="toast"></div>
+    <script>
+        // Firebase configuration (replace with your actual config if needed)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjVfygi6OpMO9mg_SfVFpaB_MH45pOIfs",
+            authDomain: "nerdix-web.firebaseapp.com",
+            projectId: "nerdix-web",
+            storageBucket: "nerdix-web.appspot.com",
+            messagingSenderId: "442990754764",
+            appId: "1:442990754764:web:cdc5f1fe88716711fc7b69",
+            measurementId: "G-S6JSQ7FVMT"
+        };
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"></script>
+        // Initialize Firebase with error handling
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBjVfygi6OpMO9mg_SfVFpaB_MH45pOIfs",
-      authDomain: "nerdix-web.firebaseapp.com",
-      projectId: "nerdix-web",
-      storageBucket: "nerdix-web.appspot.com",
-      messagingSenderId: "442990754764",
-      appId: "1:442990754764:web:cdc5f1fe88716711fc7b69",
-      measurementId: "G-S6JSQ7FVMT"
-    };
+                // Toast notification
+                function showToast(message) {
+                    const toast = document.getElementById("toast");
+                    toast.textContent = message;
+                    toast.style.opacity = 1;
+                    setTimeout(() => { toast.style.opacity = 0; }, 3000);
+                }
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+                // Unified submit function
+                function submit() {
+                    const email = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
 
-    // Toast savage
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.style.opacity = 1;
-      setTimeout(() => { toast.style.opacity = 0; }, 3000);
-    }
+                    if (!email || !password) {
+                        showToast("Please enter both email and password.");
+                        return;
+                    }
 
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+                    // Check if user is already signed in
+                    if (auth.currentUser) {
+                        // Logout if user is signed in
+                        auth.signOut()
+                            .then(() => {
+                                showToast("Logged out successfully!");
+                            })
+                            .catch((error) => {
+                                showToast("Logout failed: " + error.message);
+                            });
+                    } else {
+                        // Try to log in first
+                        auth.signInWithEmailAndPassword(email, password)
+                            .then((userCredential) => {
+                                showToast("Login Success!");
+                                console.log("User:", userCredential.user);
+                                setTimeout(() => {
+                                    window.location.href = "https://nerdick-com-q6br-rdrrth05z-eternixals-projects.vercel.app";
+                                }, 1500);
+                            })
+                            .catch((error) => {
+                                // If login fails, try to register
+                                if (error.code === 'auth/user-not-found') {
+                                    auth.createUserWithEmailAndPassword(email, password)
+                                        .then((userCredential) => {
+                                            showToast("Registered successfully!");
+                                            console.log("Registered:", userCredential.user);
+                                        })
+                                        .catch((regError) => {
+                                            showToast("Register failed: " + regError.message);
+                                        });
+                                } else {
+                                    showToast("Login failed: " + error.message);
+                                }
+                            });
+                    }
+                }
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          showToast("🔥 Login Success!");
-          console.log("User:", userCredential.user);
-          setTimeout(() => {
-            window.location.href = "https://nerdick-com-q6br-rdrrth05z-eternixals-projects.vercel.app"; 
-          }, 1500);
-        })
-        .catch((error) => {
-          showToast("Login failed: " + error.message);
-        });
-    }
-
-    function register() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          showToast("✅ Registered successfully!");
-          console.log("Registered:", userCredential.user);
-        })
-        .catch((error) => {
-          showToast("Register failed: " + error.message);
-        });
-    }
-
-    function logout() {
-      auth.signOut()
-        .then(() => {
-          showToast("👋 Logged out!");
-        })
-        .catch((error) => {
-          showToast("Logout failed: " + error.message);
-        });
-    }
-
-    // Check user state
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log("User is logged in:", user.email);
-      } else {
-        console.log("No user logged in");
-      }
-    });
-  </script>
-
+                // Check user state
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log("User is logged in:", user.email);
+                    } else {
+                        console.log("No user logged in");
+                    }
+                });
+            } else {
+                throw new Error("Firebase SDK not loaded.");
+            }
+        } catch (error) {
+            console.error("Firebase initialization error:", error.message);
+            alert("Error: Firebase is not properly loaded. Please check your internet connection or Firebase configuration.");
+        }
+    </script>
 </body>
 </html>
